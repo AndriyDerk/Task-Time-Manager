@@ -18,4 +18,4 @@ const schema = new db.Schema({
     }
 })
 
-module.exports =db.model('User', schema)
+module.exports = db.model('User', schema)

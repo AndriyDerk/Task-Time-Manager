@@ -32,7 +32,7 @@ class userController{
         if(!email || !password){
             return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
         }
-        const user = await User.findOne({where: {email}})
+        const user = await User.findOne({email})
         if(!user){
             return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
         }

@@ -2,12 +2,12 @@ const Task = require('../models/task')
 
 class taskController{
     async create(req, res, next){// TODO: перевірити чи працює
-        const {projectId, title, description, hashtags, deadline, underTaskId} = req.body
-        if(!title || !description || !hashtags || !deadline || !underTaskId){
+        const {projectId, title, description, deadline, underTaskId} = req.body
+        if(!title || !description || !deadline || !underTaskId){
             return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
         }
-        const task = await Task.create({projectId, title, description, hashtags, deadline, underTaskId})
-        task.save()//TODO: save?
+        const task = await Task.create({projectId, title, description, deadline, underTaskId})
+        task.save()
         return res.json(task)// TODO: json не треба підключати?
     }
     async getAll(req, res, next){//TODO: працює, мб накше написати?// TODO: перевірити чи працює

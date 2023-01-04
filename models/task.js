@@ -14,9 +14,6 @@ const schema = new db.Schema({//TODO : add status[String], started[Number], orde
         type: String,
         trim: true
     },
-    hashtags: {
-        type: [[String]]
-    },
     createdAt: {
         type: Date,
         default: Date.now()
@@ -34,10 +31,10 @@ const schema = new db.Schema({//TODO : add status[String], started[Number], orde
          default: false
     },
     underTaskId: {
-        type: Number,//TODO: does it work?,
+        type: String,//TODO: does it work?,
         required: true//TODO: 0 || exist id
     }
 })
 
-module.exports =db.model('Task', schema)
+module.exports = db.model('Task', schema)
 

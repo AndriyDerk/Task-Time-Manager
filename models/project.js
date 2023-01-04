@@ -9,17 +9,7 @@ const schema = new db.Schema({
     description:{
         type: String,
         trim: true
-    },
-    hashtags: {
-        type: [[String]]
-    },
-    membersId: {
-        type: [String]//TODO: does it work?
-    },
-    adminsId: {
-        type: [String],//TODO: does it work?
-        required: true
     }
 })
 
-module.exports =db.model('Project', schema)
+module.exports = db.model('Project', schema)
