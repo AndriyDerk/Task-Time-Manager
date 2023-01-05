@@ -19,4 +19,4 @@ async function start(){
     }
 }
 
-start()
+start()//TODO: зробити перевірку даних на їх тип? Нормально налаштувати помилки, доробити errorHandlingMiddleware!

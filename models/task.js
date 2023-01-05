@@ -2,7 +2,7 @@ const db= require('../db/db')
 
 const schema = new db.Schema({//TODO : add status[String], started[Number], order[Number]
     projectId:{
-        type: Number,//TODO: does it work?
+        type: String,//TODO: does it work?
         required: true
     },
     title:{
@@ -12,7 +12,8 @@ const schema = new db.Schema({//TODO : add status[String], started[Number], orde
     },
     description:{
         type: String,
-        trim: true
+        trim: true,
+        default: ""
     },
     createdAt: {
         type: Date,
@@ -24,7 +25,7 @@ const schema = new db.Schema({//TODO : add status[String], started[Number], orde
     },
     deadline: {
         type: Date,
-        required: true
+        default: new Date("9999-01-01")
     },
     workingNow:{
         type: Boolean,
@@ -32,7 +33,7 @@ const schema = new db.Schema({//TODO : add status[String], started[Number], orde
     },
     underTaskId: {
         type: String,//TODO: does it work?,
-        required: true//TODO: 0 || exist id
+        default: "0"//TODO: 0 || exist id
     }
 })
 

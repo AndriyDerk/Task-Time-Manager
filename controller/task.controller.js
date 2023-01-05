@@ -1,34 +1,37 @@
 const Task = require('../models/task')
+const ApiError = require(`../error/api.error`)
 
 class taskController{
-    async create(req, res, next){// TODO: перевірити чи працює
+    async create(req, res, next){
         const {projectId, title, description, deadline, underTaskId} = req.body
-        if(!title || !description || !deadline || !underTaskId){
-            return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
+        if(!title || !projectId){
+            return next(ApiError.badRequest("Не введено заголовок!"))//TODO: чи треба писати за id?
         }
         const task = await Task.create({projectId, title, description, deadline, underTaskId})
         task.save()
-        return res.json(task)// TODO: json не треба підключати?
+        return res.json({task})
     }
-    async getAll(req, res, next){//TODO: працює, мб накше написати?// TODO: перевірити чи працює
-        const tasks = await Task.find({createdAt: true})
-        return res.json(tasks)
-    }
-    async getById(req, res, next){// TODO: перевірити чи працює
-        const {id} = req.body
-        if(!id){
-            return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
+    async getAllByProject(req, res, next){
+        const {projectId} = req.body
+        if(!projectId){
+            return next(ApiError.badRequest("Не введено projectId!"))
         }
-        const task = await Task.findOne({__id: id})// TODO: __id?
-        return res.json(task)
-    }
-    async delete(req, res, next){// TODO: перевірити чи працює
-        const {id} = req.body
-        if(!id){
-            return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
+        const tasks = await Task.find({projectId})
+        if(!tasks){
+            return next(ApiError.badRequest("projectId введено неправильно!"))
         }
-        const task = await Task.findOneAndDelete({__id: id})//TODO: need to save?
-        return res.json(task)//TODO: потрібно повератати і чи так воно видаляється?
+        return res.json({tasks})
+    }
+    async delete(req, res, next){
+        const {taskId} = req.body
+        if(!taskId){
+            return next(ApiError.badRequest("Не введено taskId!"))
+        }
+        const task = await Task.findOneAndDelete({_id: taskId})
+        if(!task){
+            return next(ApiError.badRequest("task з таким taskId відсутній!"))
+        }
+        return res.json({task})
     }
 }
 

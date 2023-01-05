@@ -1,11 +1,13 @@
 const Project = require('../models/project')
+const Task = require('../models/task')
 const ProjectUser = require('../models/projectUser')
+const ApiError = require(`../error/api.error`)
 
 class projectController{
     async create(req, res, next){
         const {title, description, userId} = req.body
         if(!title || !userId){
-            return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
+            return next(ApiError.badRequest('Не вказано заголовок!'))//TODO:  userId?
         }
         const project = await Project.create({title, description})
         project.save()
@@ -23,9 +25,12 @@ class projectController{
     async getAllByUser(req, res, next){
         const {userId} = req.body
         if(!userId){
-            return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
+            return next(ApiError.badRequest('Не вказано userId!'))
         }
         const projectsId = await ProjectUser.find({userId})
+        if(!projectsId){
+            return next(ApiError.badRequest('Цей користувач не має жодних проектів!'))
+        }
         let projects = [], id
         projects[0]=projectsId[0]
         for (let it in projectsId) {
@@ -34,13 +39,17 @@ class projectController{
         }
         return res.json({projects})
     }
-    async delete(req, res, next){// TODO: перевірити чи працює | ще потрібно видалити всі пов'язані з проектом таскі
-        const {id} = req.body
-        if(!id){
-            return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
+    async delete(req, res, next){
+        const {projectId} = req.body
+        if(!projectId){
+            return next(ApiError.badRequest('Не вказано projectId!'))
         }
-        const project = await Project.findOneAndDelete({_id: id})//TODO: need to save?
-        return res.json(project)//TODO: потрібно повератати і чи так воно видаляється?
+        const project = await Project.findOneAndDelete({_id: projectId})
+        if(!project){
+            return next(ApiError.badRequest('Проєкт з таким projectId віжсутній!'))
+        }
+        const tasks = await Task.deleteMany({projectId: projectId})
+        return res.json({tasks})
     }
 }
 
