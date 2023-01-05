@@ -8,7 +8,8 @@ const schema = new db.Schema({
     },
     description:{
         type: String,
-        trim: true
+        trim: true,
+        default: ""
     }
 })
 

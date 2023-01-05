@@ -1,5 +1,6 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
+const ApiError = require(`../error/api.error`)
 const jwt = require('jsonwebtoken')
 
 const generateJWT = (id, email) =>{
@@ -14,13 +15,11 @@ class userController{
     async registration(req, res, next){
      const {email, password, name} = req.body
         if(!email || !password || !name){
-            return console.log(`1Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
+            return next(ApiError.badRequest("Не введено логін, пароль або ім'я!"))
         }
         const candidate = await User.findOne({email})
         if(candidate){
-            res.json({candidate})
-
-            return console.log(`2Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
+            return next(ApiError.badRequest('Корситувач з таким email вже зареєстрований!'))
         }
         const hashPassword = await bcrypt.hash(password, 5)
         const user = await User.create({email, password: hashPassword, name})
@@ -30,15 +29,15 @@ class userController{
     async login(req, res, next){
         const {email, password} = req.body
         if(!email || !password){
-            return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
+            return next(ApiError.badRequest('Не введено логін або пароль!'))
         }
         const user = await User.findOne({email})
         if(!user){
-            return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
+            return next(ApiError.badRequest('Користувача з таким email не знайдено!'))
         }
         let comparePassword = await bcrypt.compare(password, user.password)
         if(!comparePassword){
-            return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
+            return next(ApiError.badRequest('Невірний пароль!'))
         }
         const token = generateJWT(user.id, email)
         return res.json({token})

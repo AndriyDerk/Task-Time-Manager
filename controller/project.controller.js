@@ -25,20 +25,16 @@ class projectController{
         if(!userId){
             return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
         }
-        let id = userId.toString()//TODO
-        const projectsId = await ProjectUser.find({id})
-        let project, val, projects
-        for (let it in projectsId){
-            val = projectsId[it].projectId
-            project = await Project.findOne({val})
-            console.log(project)
-            projects += project
+        const projectsId = await ProjectUser.find({userId})
+        let projects = [], id
+        projects[0]=projectsId[0]
+        for (let it in projectsId) {
+            id = projectsId[it].projectId
+            projects[it] = await Project.findOne({_id: id})
         }
-        // let obj = JSON.parse(projects)
         return res.json({projects})
-
     }
-    async delete(req, res, next){// TODO: перевірити чи працює
+    async delete(req, res, next){// TODO: перевірити чи працює | ще потрібно видалити всі пов'язані з проектом таскі
         const {id} = req.body
         if(!id){
             return console.log(`Oooops... something went wrong!`)//TODO: чи потрібно передати параметр в `res`
