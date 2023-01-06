@@ -2,49 +2,67 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const ApiError = require(`../error/api.error`)
 const jwt = require('jsonwebtoken')
-
-const generateJWT = (id, email) =>{
-    return jwt.sign(
-        {id, email},
-        process.env.SECRET_KEY,
-        {expiresIn: '24h'}
-    )
-}
+const userService = require('../service/user.service')
 
 class userController{
     async registration(req, res, next){
-     const {email, password, name} = req.body
-        if(!email || !password || !name){
-            return next(ApiError.badRequest("Не введено логін, пароль або ім'я!"))
+        try{
+            const {email, password, name} = req.body
+            if(!email || !password || !name){
+                return next(ApiError.badRequest("Не введено логін, пароль або ім'я!"))
+            }
+            const userData = await userService.registration(email, password, name)
+            res.cookie('refreshToken', userData.refreshToken, {maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true})
+            return res.json(userData)
+        }catch (e) {
+            next(e)
         }
-        const candidate = await User.findOne({email})
-        if(candidate){
-            return next(ApiError.badRequest('Корситувач з таким email вже зареєстрований!'))
-        }
-        const hashPassword = await bcrypt.hash(password, 5)
-        const user = await User.create({email, password: hashPassword, name})
-        const token = generateJWT(user.id, email)
-        return res.json({token})
     }
     async login(req, res, next){
-        const {email, password} = req.body
-        if(!email || !password){
-            return next(ApiError.badRequest('Не введено логін або пароль!'))
+        try {
+            const {email, password} = req.body
+            if(!email || !password){
+                return next(ApiError.badRequest('Не введено логін або пароль!'))
+            }
+            const userData = await userService.login(email, password)
+            res.cookie('refreshToken', userData.refreshToken, {maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true})
+            return res.json(userData)
+        }catch (e){
+            next(e)
         }
-        const user = await User.findOne({email})
-        if(!user){
-            return next(ApiError.badRequest('Користувача з таким email не знайдено!'))
-        }
-        let comparePassword = await bcrypt.compare(password, user.password)
-        if(!comparePassword){
-            return next(ApiError.badRequest('Невірний пароль!'))
-        }
-        const token = generateJWT(user.id, email)
-        return res.json({token})
     }
-    async check(req, res){
-        const token = generateJWT(req.user.id, req.user.email)
-        return res.json({token})
+    async refresh(req, res, next){
+        try {
+            const {refreshToken} = req.cookies
+            if(!refreshToken){
+                return next(ApiError.badRequest('Користувач не авторизований!'))
+            }
+            const userData = await userService.refresh(refreshToken)
+            res.cookie('refreshToken', userData.refreshToken, {maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true})
+            return res.json(userData)
+        }catch (e) {
+            next(e)
+        }
+    }
+    async activate(req, res, next){
+        try {
+            const activationLink = req.params.link
+            await userService.activate(activationLink)
+            return res.redirect(process.env.CLIENT_URL)
+        }catch (e){
+            next(e)
+        }
+    }
+
+    async logout(req, res, next){
+        try{
+            const {refreshToken} = req.cookies
+            const token = userService.logout(refreshToken)
+            res.clearCookie('refreshToken')
+            return res.json(token)
+        }catch (e) {
+            next(e)
+        }
     }
 }
 

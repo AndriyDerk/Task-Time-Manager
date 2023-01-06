@@ -15,6 +15,13 @@ const schema = new db.Schema({
         type: String,
         required: true,
         trim: true
+    },
+    isActivated:{
+        type: Boolean,
+        default: false
+    },
+    activationLink:{
+        type: String
     }
 })
 
