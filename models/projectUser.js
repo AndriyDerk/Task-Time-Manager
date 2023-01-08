@@ -15,4 +15,4 @@ const schema = new db.Schema({
     }
 })
 
-module.exports = db.model('UserProject', schema)
+module.exports = db.model('ProjectUser', schema)

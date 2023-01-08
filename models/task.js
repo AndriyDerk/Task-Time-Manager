@@ -27,9 +27,9 @@ const schema = new db.Schema({//TODO : add status[String], started[Number], orde
         type: Date,
         default: new Date("9999-01-01")
     },
-    workingNow:{
-        type: Boolean,
-         default: false
+    workingNow:{//TODO: does it work?
+        type: db.Schema.Types.ObjectId,
+         default: 0
     }
 })
 
