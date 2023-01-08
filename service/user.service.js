@@ -27,11 +27,11 @@ class userService{
     async login(email, password){
         const user = await User.findOne({email})
         if(!user){
-            return next(ApiError.badRequest('Користувача з таким email не знайдено!'))
+            throw ApiError.badRequest('Користувача з таким email не знайдено!')
         }
         let comparePassword = await bcrypt.compare(password, user.password)
         if(!comparePassword){
-            return next(ApiError.badRequest('Невірний пароль!'))
+            throw ApiError.badRequest('Невірний пароль!')
         }
         const userDto = new UserDto(user)
         const tokens = tokenService.generateTokens({...userDto})

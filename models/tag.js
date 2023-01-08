@@ -9,7 +9,7 @@ const schema = new db.Schema({
         type: String,
     },
     taskId: {
-        type: String,
+        type: db.Schema.Types.ObjectId,
         required: true
     }
 })

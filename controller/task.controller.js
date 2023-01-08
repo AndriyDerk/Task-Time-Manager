@@ -1,15 +1,14 @@
-const Task = require('../models/task')
 const ApiError = require(`../error/api.error`)
+const taskService = require('../service/task.service')
 
 class taskController{
     async create(req, res, next){
         try{
-            const {projectId, title, description, deadline, underTaskId} = req.body
+            const {projectId, title, description, deadline} = req.body
             if(!title || !projectId){
                 return next(ApiError.badRequest("Не введено заголовок!"))//TODO: чи треба писати за id?
             }
-            const task = await Task.create({projectId, title, description, deadline, underTaskId})
-            task.save()
+            const task = await taskService.create(projectId, title, description, deadline)
             return res.json({task})
         }catch (e) {
             next(e)
@@ -21,10 +20,8 @@ class taskController{
             if(!projectId){
                 return next(ApiError.badRequest("Не введено projectId!"))
             }
-            const tasks = await Task.find({projectId})
-            if(!tasks){
-                return next(ApiError.badRequest("projectId введено неправильно!"))
-            }
+            const tasks = await taskService.getAllByProject(projectId)
+
             return res.json({tasks})
         }catch (e) {
             next(e)
@@ -36,10 +33,8 @@ class taskController{
             if(!taskId){
                 return next(ApiError.badRequest("Не введено taskId!"))
             }
-            const task = await Task.findOneAndDelete({_id: taskId})
-            if(!task){
-                return next(ApiError.badRequest("task з таким taskId відсутній!"))
-            }
+            const task = await taskService.delete(taskId)
+
             return res.json({task})
         }catch (e) {
             next(e)

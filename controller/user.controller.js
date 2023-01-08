@@ -1,7 +1,4 @@
-const User = require('../models/user')
-const bcrypt = require('bcrypt')
 const ApiError = require(`../error/api.error`)
-const jwt = require('jsonwebtoken')
 const userService = require('../service/user.service')
 
 class userController{

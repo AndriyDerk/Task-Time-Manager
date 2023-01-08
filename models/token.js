@@ -2,7 +2,7 @@ const db= require('../db/db')
 
 const schema = new db.Schema({
     userId:{
-        type: String
+        type: db.Schema.Types.ObjectId
     },
     refreshToken:{
         type: String,

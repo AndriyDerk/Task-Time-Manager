@@ -1,23 +1,15 @@
-const Project = require('../models/project')
-const Task = require('../models/task')
-const ProjectUser = require('../models/projectUser')
 const ApiError = require(`../error/api.error`)
+const projectService = require('../service/project.service')
 
 class projectController{
     async create(req, res, next){
         try{
             const {title, description, userId} = req.body
             if(!title || !userId){
-                return next(ApiError.badRequest('Не вказано заголовок!'))//TODO:  userId?
+                return next(ApiError.badRequest('Не вказано заголовок!'))
             }
-            const project = await Project.create({title, description})
-            project.save()
+            const project = await projectService.create(title, description, userId)
 
-            {//create a link between the project and the user
-                let projectId = project._id.toString()
-                const projectUser = await ProjectUser.create({projectId, userId})
-                projectUser.save()
-            }
             return res.json(project)
         }catch (e){
             next(e)
@@ -32,17 +24,9 @@ class projectController{
             if(!userId){
                 return next(ApiError.badRequest('Не вказано userId!'))
             }
-            const projectsId = await ProjectUser.find({userId})
-            if(!projectsId){
-                return next(ApiError.badRequest('Цей користувач не має жодних проектів!'))
-            }
-            let projects = [], id
-            projects[0]=projectsId[0]
-            for (let it in projectsId) {
-                id = projectsId[it].projectId
-                projects[it] = await Project.findOne({_id: id})
-            }
-            return res.json({projects})
+            const projects = await projectService.getAllByUser(userId)
+
+            return res.json(projects)
         }catch (e) {
             next(e)
         }
@@ -53,12 +37,9 @@ class projectController{
             if(!projectId){
                 return next(ApiError.badRequest('Не вказано projectId!'))
             }
-            const project = await Project.findOneAndDelete({_id: projectId})
-            if(!project){
-                return next(ApiError.badRequest('Проєкт з таким projectId віжсутній!'))
-            }
-            const tasks = await Task.deleteMany({projectId: projectId})
-            return res.json({tasks})
+            const deleteData = await projectService.delete(projectId)
+
+            return res.json(deleteData)
         }catch (e) {
             next(e)
         }

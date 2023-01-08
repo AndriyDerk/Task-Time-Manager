@@ -2,11 +2,11 @@ const db= require('../db/db')
 
 const schema = new db.Schema({
     projectId: {
-        type: String,
+        type: db.Schema.Types.ObjectId,
         required: true
     },
     userId: {
-        type: String,
+        type: db.Schema.Types.ObjectId,
         required: true
     },
     admin: {

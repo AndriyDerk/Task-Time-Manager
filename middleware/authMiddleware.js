@@ -1,18 +1,28 @@
-const jwt = require('jsonwebtoken')
+const ApiError = require(`../error/api.error`)
+const tokenService = require('../service/token.service')
 
 module.exports = (req, res, next) =>{
     if(req.method === 'OPTIONS'){
         next()
     }
     try{
-        const token = req.headers.authorization.split(' ')[1]
+        const token = req.headers.authorization
         if(!token){
-            res.status(401).json({message: 'Користувач не авторизаваний'})
+            return next(ApiError.badRequest('Користувач не авторизаваний'))
         }
-        const decoded = jwt.verify(token, process.env.SECRET_KEY)
-        req.user = decoded
+        const accessToken = token.split(' ')[1]
+        if(!accessToken){
+            return next(ApiError.badRequest('Користувач не авторизаваний'))
+        }
+
+        const userData = tokenService.validateAccessToken(accessToken)
+        if(!userData){
+            return next(ApiError.badRequest('Користувач не авторизаваний'))
+        }
+
+        req.user = userData
         next()
     }catch (e){
-        res.status(401).json({message: 'Користувач не авторизаваний'})
+        return next(ApiError.badRequest())
     }
 };
