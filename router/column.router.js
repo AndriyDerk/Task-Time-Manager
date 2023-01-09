@@ -5,6 +5,6 @@ const authMiddleware = require('../middleware/authMiddleware')
 
 router.post('/create',authMiddleware, columnController.create)
 router.get('/columns',authMiddleware, columnController.getAllByProject)
-router.put('/delete',authMiddleware, columnController.delete)
+router.delete('/delete',authMiddleware, columnController.delete)
 
 module.exports = router

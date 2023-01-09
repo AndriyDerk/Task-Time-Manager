@@ -1,6 +1,6 @@
 const db= require('../db/db')
 
-const schema = new db.Schema({//TODO : add status[String], started[Number], order[Number]
+const schema = new db.Schema({
     projectId:{
         type: db.Schema.Types.ObjectId,
         required: true
@@ -15,6 +15,14 @@ const schema = new db.Schema({//TODO : add status[String], started[Number], orde
         trim: true,
         default: ""
     },
+    order: {
+        type: Number,
+        // required: true
+    },
+    columnId:{
+      type: db.Schema.Types.ObjectId,
+      required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now()
@@ -27,9 +35,9 @@ const schema = new db.Schema({//TODO : add status[String], started[Number], orde
         type: Date,
         default: new Date("9999-01-01")
     },
-    workingNow:{//TODO: does it work?
+    workingNow:{
         type: db.Schema.Types.ObjectId,
-         default: 0
+         default: "000000000000000000000000"
     }
 })
 

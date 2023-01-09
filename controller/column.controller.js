@@ -28,7 +28,7 @@ class columnController{
             }
             const columns = columnService.getAllByProject(projectId)
 
-            return res.json(column)
+            return res.json(columns)
         }catch (e) {
             next(e)
         }

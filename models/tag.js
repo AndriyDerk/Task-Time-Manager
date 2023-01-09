@@ -7,6 +7,7 @@ const schema = new db.Schema({
     },
     color: {
         type: String,
+        default: "#00ffff"
     },
     taskId: {
         type: db.Schema.Types.ObjectId,

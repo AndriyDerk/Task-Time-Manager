@@ -4,11 +4,12 @@ const taskService = require('../service/task.service')
 class taskController{
     async create(req, res, next){
         try{
-            const {projectId, title, description, deadline} = req.body
-            if(!title || !projectId){
-                return next(ApiError.badRequest("Не введено заголовок!"))//TODO: чи треба писати за id?
+            const {projectId, title, description, columnId, deadline} = req.body
+            if(!title || !projectId || !columnId){
+                return next(ApiError.badRequest("Не введено заголовок title, projectId або columnId"))
             }
-            const task = await taskService.create(projectId, title, description, deadline)
+            const order = await taskService.lastInOrder(projectId)
+            const task = await taskService.create(projectId, title, description, order, columnId, deadline)
             return res.json({task})
         }catch (e) {
             next(e)
@@ -40,6 +41,21 @@ class taskController{
             next(e)
         }
     }
+
+    async changeOrder(req, res, next){
+        try{
+            const {taskId, columnId, order} = req.body
+            if(!taskId || !columnId || !order){
+                return ApiError.badRequest('Не введено projectId, taskId, columnId або order!')
+            }
+            const task = await taskService.changeOrder(taskId, columnId, order)
+
+            return res.json(task)
+        }catch(e){
+            next(e)
+        }
+    }
+
 }
 
 module.exports = new taskController()

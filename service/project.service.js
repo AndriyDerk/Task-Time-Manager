@@ -1,7 +1,7 @@
 const Project = require('../models/project')
-const Task = require('../models/task')
 const ProjectUser = require('../models/projectUser')
-const ApiError = require(`../error/api.error`)
+const ApiError = require('../error/api.error')
+const taskService = require('../service/task.service')
 
 class projectService{
 
@@ -21,7 +21,7 @@ class projectService{
     async getAllByUser(userId){
         const projectsId = await ProjectUser.find({userId})
         if(!projectsId){
-            throw ApiError.badRequest('Цей користувач не має жодних проектів!')
+            throw ApiError.notFound('Цей користувач не має жодних проектів!')
         }
         let projects = [], id
         projects[0]=projectsId[0]
@@ -36,12 +36,11 @@ class projectService{
     async delete(projectId){
         const project = await Project.findByIdAndDelete(projectId)
         if(!project){
-            throw ApiError.badRequest('Проєкт з таким projectId відсутній!')
+            throw ApiError.notFound('Проєкт з таким projectId відсутній!')
         }
-        const projectUser = await ProjectUser.findOneAndDelete({projectId: projectId})
-        const tasks = await Task.deleteMany({projectId: projectId})
+        const tasks = await taskService.deleteAllByProject(projectId)
 
-        return ({project: project, projectUser: projectUser, tasks: tasks})
+        return ({project: project, tasks: tasks})//TODO: return subtasks?
     }
 }
 

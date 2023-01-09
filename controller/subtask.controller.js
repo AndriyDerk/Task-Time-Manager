@@ -24,7 +24,7 @@ class subtaskController{
             }
             const subtasks = await subtaskService.getAllByTask(taskId)
 
-            return subtasks
+            return res.json(subtask)
         }catch (e){
             next(e)
         }

@@ -6,7 +6,7 @@ class columnService {
     async create(name, projectId){
         const candidate = await Column.findOne(name)
         if(candidate){
-            throw ApiError.badRequest('кластер з такою назвою вже існує')
+            throw ApiError.preconditionFailed('кластер з такою назвою вже існує')
         }
         const column = await Column.create({name, projectId})
 
@@ -15,8 +15,8 @@ class columnService {
 
     async getAllByProject(projectId){
         const columns = await Column.find(projectId)
-        if(columns){
-            throw ApiError.badRequest('не має жодниг columns?')
+        if(!columns){
+            throw ApiError.notFound('не має жодниг columns?')
         }
 
         return columns
@@ -25,8 +25,18 @@ class columnService {
     async delete(columnId){
         const column = await Column.findOneAndDelete({_id: columnId})
         if(!column){
-            throw ApiError.badRequest('column з таким columnId не знайдено')
+            throw ApiError.notFound('column з таким columnId не знайдено')
         }
+
+        return column
+    }
+
+    async sortColumn(columnId){
+        const column = await Column.findById(columnId).sort({order: 1})
+        for(let it in column){
+            column[it].order = it + 1
+        }
+        column.save()// TODO: does it work?
 
         return column
     }

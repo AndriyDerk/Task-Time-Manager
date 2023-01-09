@@ -5,6 +5,6 @@ const authMiddleware = require('../middleware/authMiddleware')
 
 router.post('/create',authMiddleware, subtaskController.create)
 router.get('/subtasks',authMiddleware, subtaskController.getAllByTask)
-router.put('/delete',authMiddleware, subtaskController.delete)
+router.delete('/delete',authMiddleware, subtaskController.delete)
 
 module.exports = router

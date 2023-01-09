@@ -3,7 +3,8 @@ const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const router = require('./router/index')
-const errorMiddleware = require(`./middleware/errorHandlingMiddleware`)
+const errorMiddleware = require('./middleware/errorHandlingMiddleware')
+const ApiError = require('./error/api.error')
 
 const PORT = 5000 || process.env.PORT
 
@@ -21,8 +22,8 @@ async function start(){
             console.log(`server started on PORT: ${PORT}`)
         })
     }catch (e){
-        console.log(e)//TODO: error
+        throw  ApiError.internal('Непередбачувана помилка!')
     }
 }
 
-start()//TODO: зробити перевірку даних на їх тип? Нормально налаштувати помилки, доробити errorHandlingMiddleware!Видаляю project_user  ?
+start()//TODO: зробити перевірку даних на їх тип? <- await?

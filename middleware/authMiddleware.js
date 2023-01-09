@@ -8,21 +8,21 @@ module.exports = (req, res, next) =>{
     try{
         const token = req.headers.authorization
         if(!token){
-            return next(ApiError.badRequest('Користувач не авторизаваний'))
+            return next(ApiError.unauthorized('Користувач не авторизаваний'))
         }
         const accessToken = token.split(' ')[1]
         if(!accessToken){
-            return next(ApiError.badRequest('Користувач не авторизаваний'))
+            return next(ApiError.unauthorized('Користувач не авторизаваний'))
         }
 
         const userData = tokenService.validateAccessToken(accessToken)
         if(!userData){
-            return next(ApiError.badRequest('Користувач не авторизаваний'))
+            return next(ApiError.unauthorized('Користувач не авторизаваний'))
         }
 
         req.user = userData
         next()
     }catch (e){
-        return next(ApiError.badRequest())
+        return next(ApiError.internal())
     }
 };

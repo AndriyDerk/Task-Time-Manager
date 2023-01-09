@@ -6,17 +6,28 @@ class ApiError extends Error{
     }
 
     static badRequest(message){
-        return new ApiError(404, message)//сервер не може знайти того, чого вимагає запит від клієнта, хоча контакт з сервером установлено
+        return new ApiError(400, message)// Відповідь означає, що сервер не розуміє запиту через невірний синтаксис
     }
 
-    static internal(message){
-        return new ApiError(500, message)//сервер не зміг виконати запит через непередбачену помилку
+    static unauthorized(message){
+        return new ApiError(401, message)// Для отримання запитуваної відповіді потрібна аутентифікація. Статус схожий на статус 403, але в цьому випадку, аутентифікація можлива
     }
 
     static forbidden(message){
-        return new ApiError(403, message)// у відвідувача недостатньо прав для перегляду контенту
+        return new ApiError(403, message)// У відвідувача недостатньо прав для перегляду контенту
     }
-    
+
+    static notFound(message){
+        return new ApiError(404, message)// Сервер не може знайти запитуваний ресурс
+    }
+
+    static preconditionFailed(message){
+        return new ApiError(412, message)// Клієнт вказав в своїх заголовках умови, які сервер не може виконати
+    }
+
+    static internal(message){
+        return new ApiError(500, message)// Сервер не зміг виконати запит через непередбачену помилку
+    }
 }
 
 module.exports = ApiError

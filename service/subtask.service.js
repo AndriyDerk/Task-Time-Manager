@@ -12,8 +12,14 @@ class subtaskService{
     async getAllByTask(taskId){
         const subtasks = await Subtask.find({taskId})
         if(!subtasks){
-            throw ApiError.badRequest('subtasks з таким taskId не знайдено')
+            throw ApiError.notFound('subtasks з таким taskId не знайдено')
         }
+
+        return subtasks
+    }
+
+    async deleteAllByTask(taskId){
+        const subtasks = await Subtask.deleteMany(taskId)
 
         return subtasks
     }
@@ -21,7 +27,7 @@ class subtaskService{
     async delete(subtaskId){
         const subtask = await Subtask.findOneAndDelete(subtaskId)
         if(!subtask){
-            throw ApiError.badRequest('subtask з таким subtaskId не знайдено')
+            throw ApiError.notFound('subtask з таким subtaskId не знайдено')
         }
 
         return subtask
