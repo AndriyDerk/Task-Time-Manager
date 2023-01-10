@@ -66,6 +66,63 @@ class userController{
             next(e)
         }
     }
+
+    async rename(req, res ,next){
+        try{
+            const {userId, name} = req.body
+            if(!userId || !name){
+                return next(ApiError.badRequest('Не введено name або userId!'))
+            }
+            const user = await userService.rename(userId, name)
+
+            return res.json(user)
+        }catch (e){
+            next(e)
+        }
+    }
+
+    async changeEmail(req, res, next){
+        try {
+            const {userId, newEmail} = req.body
+            if(!userId || !newEmail){
+                return next(ApiError.badRequest('Не введено newEmail або userId!'))
+            }
+            const user = await userService.changeEmail(userId, newEmail)
+
+            return user
+        }catch (e) {
+            next(e)
+        }
+    }
+
+    async validPassword(req, res, next){//oldPassword -> validPassword: if ok then newPassword -> changePassword to change this one(or changeEmail)
+        try{
+            const {userId, oldPassword}  = req.body
+            if(!userId || !oldPassword){
+                return next(ApiError.badRequest('Не введено oldPassword або userId!'))
+            }
+            const isCorrect = await userService.validPassword(userId, oldPassword)
+
+            return isCorrect
+        }catch (e){
+            next(e)
+        }
+    }
+
+    async changePassword(req, res, next){
+        try{
+            const {userId, newPassword} = req.body
+            if(!userId || !newPassword){
+                return next(ApiError.badRequest('Не введено newPassword або userId!'))
+            }
+            const user = await userService.changePassword(userId, newPassword)
+
+            return res.json(user)
+        }catch (e){
+            next(e)
+        }
+    }
+
 }
 
 module.exports = new userController()

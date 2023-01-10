@@ -17,7 +17,17 @@ class columnController{
     }
 
     async rename(req, res, next){//TODO: do next time
+       try{
+           const {columnId, name} = req.body
+           if(!columnId || !name){
+               return ApiError.badRequest('Не вказано columnId або name!')
+           }
+           const column = await columnService.rename(columnId, name)
 
+           return res.json(column)
+       }catch (e) {
+           next(e)
+       }
     }
 
     async getAllByProject(req, res, next){

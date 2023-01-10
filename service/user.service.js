@@ -69,5 +69,56 @@ class userService{
         return token
     }
 
+    async rename(userId, name){
+        const user = await User.findById(userId)
+        if(!user){
+            throw ApiError.notFound('user з таким userId не знайдено!')
+        }
+        user.name = name
+        user.save()
+
+        return user
+    }
+
+    async changeEmail(userId, newEmail){
+        const user = await User.findById(userId)
+        if(!user){
+            throw ApiError.notFound('user з таким userId не знайдено!')
+        }
+        user.email = newEmail
+        user.isActivated = false
+        const activationLink = uuid.v4()
+        user.activationLink = activationLink
+        await mailService.sendActivationMail(newEmail, `${process.env.API_URL}/user/activate/${activationLink}`)
+        user.save()
+
+        return user
+    }
+
+    async validPassword(userId, oldPassword){
+        const user = await User.findById(userId)
+        if(!user){
+            throw ApiError.notFound('user з таким userId не знайдено!')
+        }
+        let comparePassword = await bcrypt.compare(oldPassword, user.password)
+        if(!comparePassword){
+            throw ApiError.badRequest('Невірний пароль!')
+        }
+
+        return true//TODO: mb return user?
+    }
+
+    async changePassword(userId, newPassword){
+        const user = await User.findById(userId)
+        if(!user){
+            throw ApiError.notFound('user з таким userId не знайдено!')
+        }
+        const hashPassword = await bcrypt.hash(newPassword, 3)
+        user.password = hashPassword
+        user.save()
+
+        return user
+    }
+
 }
 module.exports = new userService()

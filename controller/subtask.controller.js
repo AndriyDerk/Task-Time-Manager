@@ -6,9 +6,23 @@ class subtaskController{
         try{
             const {description, taskId} = req.body
             if(!description || !taskId){
-                return ApiError.badRequest('Не введено description або taskId')
+                return next(ApiError.badRequest('Не введено description або taskId'))
             }
             const subtask = await subtaskService.create(description, taskId)
+
+            return res.json(subtask)
+        }catch (e){
+            next(e)
+        }
+    }
+
+    async rename(req, res ,next){
+        try{
+            const {subtaskId, name} = req.body
+            if(!subtaskId || !name){
+                return next(ApiError.badRequest('Не введено name або subtaskId!'))
+            }
+            const subtask = await subtaskService.rename(subtaskId, name)
 
             return res.json(subtask)
         }catch (e){
@@ -20,11 +34,11 @@ class subtaskController{
         try{
             const {taskId} = req.body
             if(!taskId){
-                return ApiError.badRequest('Не введено taskId')
+                return next(ApiError.badRequest('Не введено taskId'))
             }
             const subtasks = await subtaskService.getAllByTask(taskId)
 
-            return res.json(subtask)
+            return res.json(subtasks)
         }catch (e){
             next(e)
         }
@@ -34,7 +48,7 @@ class subtaskController{
         try{
             const {subtaskId} = req.body
             if(!subtaskId){
-                return ApiError.badRequest('Не введено subtaskId')
+                return next(ApiError.badRequest('Не введено subtaskId'))
             }
             const subtask = await subtaskService.delete(subtaskId)
 

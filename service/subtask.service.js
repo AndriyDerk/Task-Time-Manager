@@ -9,6 +9,17 @@ class subtaskService{
         return subtask
     }
 
+    async rename(subtaskId, description){
+        const subtask = await Subtask.findById(subtaskId)
+        if(!subtask){
+            throw ApiError.notFound('subtasks з таким subtaskId не знайдено')
+        }
+        subtask.description = description
+        subtask.save()
+
+        return subtask
+    }
+
     async getAllByTask(taskId){
         const subtasks = await Subtask.find({taskId})
         if(!subtasks){

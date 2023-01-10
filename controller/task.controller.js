@@ -56,6 +56,34 @@ class taskController{
         }
     }
 
+    async rename(req, res ,next){
+        try{
+            const {taskId, name} = req.body
+            if(!taskId || !name){
+                return next(ApiError.badRequest('Не введено name або taskId!'))
+            }
+            const task = await taskService.rename(taskId, name)
+
+            return res.json(task)
+        }catch (e){
+            next(e)
+        }
+    }
+
+    async changeDescription(req, res, next){
+        try{
+            const {taskId, description} = req.body
+            if(!taskId || !description){
+                return next(ApiError.badRequest('Не введено description або taskId!'))
+            }
+            const task = await taskService.changeDescription(taskId, description)
+
+            return res.json(task)
+        }catch (e){
+            next(e)
+        }
+    }
+
 }
 
 module.exports = new taskController()

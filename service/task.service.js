@@ -18,8 +18,8 @@ class  taskService{
         return tasks
     }
 
-    async deleteAllByProject(projectId){
-        const tasks = await Task.deleteMany({projectId})
+    async deleteAllByColumn(columnId){
+        const tasks = await Task.deleteMany({columnId})
         let taskId, subtasks, tags
         for(let it in tasks) {
             taskId = tasks[it].task
@@ -64,6 +64,28 @@ class  taskService{
         const column = await columnService.sortColumn(columnId)
 
         return column
+    }
+
+    async rename(taskId, title){
+        const task = await Task.findById(taskId)
+        if(!task){
+            throw ApiError.notFound('tasks з таким taskId не знайдено')
+        }
+        task.title = title
+        task.save()
+
+        return task
+    }
+
+    async changeDescription(taskId, description){
+        const task = await Task.findById(taskId)
+        if(!task){
+            throw ApiError.notFound('tasks з таким taskId не знайдено')
+        }
+        task.description = description
+        task.save()
+
+        return task
     }
 
 }
