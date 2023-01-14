@@ -5,7 +5,7 @@ const taskService = require('./task.service')
 class columnService {
 
     async create(name, projectId){
-        const candidate = await Column.findOne(name)
+        const candidate = await Column.findOne({name})
         if(candidate){
             throw ApiError.preconditionFailed('кластер з такою назвою вже існує')
         }
@@ -15,10 +15,7 @@ class columnService {
     }
 
     async getAllByProject(projectId){
-        const columns = await Column.find(projectId)
-        if(!columns){
-            throw ApiError.notFound('не має жодниг columns?')
-        }
+        const columns = await Column.find({projectId})
 
         return columns
     }
@@ -42,16 +39,6 @@ class columnService {
         const tasks = await taskService.deleteAllByColumn(columnId)
 
         return ({column: column, tasks: tasks})
-    }
-
-    async sortColumn(columnId){
-        const column = await Column.findById(columnId).sort({order: 1})
-        for(let it in column){
-            column[it].order = it + 1
-        }
-        column.save()// TODO: does it work?
-
-        return column
     }
 
     async rename(columnId, name){

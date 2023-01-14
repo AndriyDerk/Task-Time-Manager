@@ -52,7 +52,7 @@ class subtaskController{
             }
             const subtask = await subtaskService.delete(subtaskId)
 
-            return subtask
+            return res.json(subtask)
         }catch (e){
             next(e)
         }

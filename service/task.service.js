@@ -2,7 +2,6 @@ const Task = require('../models/task')
 const ApiError = require('../error/api.error')
 const subtaskService = require('./subtask.service')
 const tagService = require('./tag.service')
-const columnService = require('./column.service')
 
 class  taskService{
     async create(projectId, title, description, order, columnId, deadline){
@@ -49,21 +48,21 @@ class  taskService{
     }
 
     async changeOrder(taskId, columnId, order){
-        const task = await Task.findOne({taskId: taskId})
+        const task = await Task.findById(taskId)
         let tf = 0, prevColumnId = task.columnId
         if(prevColumnId == columnId){// TODO: does it work?
             tf = 1
         }
         task.columnId = columnId
         task.order = order-0.5
-        task.save()// TODO: does it work?
+        await task.save()
 
-        if(tf){
-            const prevColumn = await columnService.sortColumn(prevColumnId)
+        if(!tf){
+            const prevTasks = await this.sortTaskInColumn(prevColumnId)
         }
-        const column = await columnService.sortColumn(columnId)
+        const tasks = await this.sortTaskInColumn(columnId)
 
-        return column
+        return tasks
     }
 
     async rename(taskId, title){
@@ -86,6 +85,16 @@ class  taskService{
         task.save()
 
         return task
+    }
+
+    async sortTaskInColumn(columnId){
+        const tasks = await Task.find({columnId}).sort({order: 1})
+        for(let it in tasks){
+            tasks[it].order = Number(it) + Number(1)
+            tasks[it].save()
+        }
+
+        return tasks
     }
 
 }

@@ -11,7 +11,10 @@ const PORT = 5000 || process.env.PORT
 const app = express()
 
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    credentials: true,
+    origin: 'http://localhost:3000'
+}))
 app.use(cookieParser())
 app.use('/', router)
 app.use(errorMiddleware)
@@ -26,4 +29,4 @@ async function start(){
     }
 }
 
-start()//TODO: зробити перевірку даних на їх тип? <- await?
+start()//TODO: зробити перевірку даних на їх тип?

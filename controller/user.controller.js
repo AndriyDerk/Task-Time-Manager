@@ -25,7 +25,7 @@ class userController{
             const userData = await userService.login(email, password)
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true})
 
-            return res.json(userData)
+            return res.json({accessToken: userData.accessToken, user: userData.user})
         }catch (e){
             next(e)
         }
@@ -39,7 +39,7 @@ class userController{
             const userData = await userService.refresh(refreshToken)
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true})
 
-            return res.json(userData)
+            return res.json({accessToken: userData.accessToken, user: userData.user})
         }catch (e) {
             next(e)
         }
@@ -89,7 +89,7 @@ class userController{
             }
             const user = await userService.changeEmail(userId, newEmail)
 
-            return user
+            return res.json(user)
         }catch (e) {
             next(e)
         }
@@ -103,7 +103,7 @@ class userController{
             }
             const isCorrect = await userService.validPassword(userId, oldPassword)
 
-            return isCorrect
+            return res.json({isCorrect: isCorrect})
         }catch (e){
             next(e)
         }

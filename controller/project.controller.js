@@ -19,7 +19,7 @@ class projectController{
         try{
             const {projectId, name} = req.body
             if(!projectId || !name){
-                return ApiError.badRequest('Не вказано columnId або name!')
+                return next(ApiError.badRequest('Не вказано columnId або name!'))
             }
             const project = await projectService.rename(projectId, name)
 

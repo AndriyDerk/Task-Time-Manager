@@ -6,7 +6,7 @@ class columnController{
         try{
             const {name, projectId} = req.body
             if(!name || !projectId){
-                return ApiError.badRequest('Не вказано name або projectId')
+                return next(ApiError.badRequest('Не вказано name або projectId'))
             }
             const column = await columnService.create(name, projectId)
 
@@ -20,7 +20,7 @@ class columnController{
        try{
            const {columnId, name} = req.body
            if(!columnId || !name){
-               return ApiError.badRequest('Не вказано columnId або name!')
+               return next(ApiError.badRequest('Не вказано columnId або name!'))
            }
            const column = await columnService.rename(columnId, name)
 
@@ -34,9 +34,9 @@ class columnController{
         try {
             const {projectId} = req.body
             if(!projectId){
-                return ApiError.badRequest('Не вказано projectId!')
+                return next(ApiError.badRequest('Не вказано projectId!'))
             }
-            const columns = columnService.getAllByProject(projectId)
+            const columns = await columnService.getAllByProject(projectId)
 
             return res.json(columns)
         }catch (e) {
@@ -48,7 +48,7 @@ class columnController{
         try{
             const {columnId} = req.body
             if(!columnId){
-                return ApiError.badRequest('Не вказано columnId!')
+                return next(ApiError.badRequest('Не вказано columnId!'))
             }
             const column = await columnService.delete(columnId)
 

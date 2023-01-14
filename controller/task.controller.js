@@ -5,6 +5,8 @@ class taskController{
     async create(req, res, next){
         try{
             const {projectId, title, description, columnId, deadline} = req.body
+            console.log(1)
+
             if(!title || !projectId || !columnId){
                 return next(ApiError.badRequest("Не введено заголовок title, projectId або columnId"))
             }
@@ -46,7 +48,7 @@ class taskController{
         try{
             const {taskId, columnId, order} = req.body
             if(!taskId || !columnId || !order){
-                return ApiError.badRequest('Не введено projectId, taskId, columnId або order!')
+                return next(ApiError.badRequest('Не введено projectId, taskId, columnId або order!'))
             }
             const task = await taskService.changeOrder(taskId, columnId, order)
 

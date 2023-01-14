@@ -5,8 +5,8 @@ class tagController{
     async create(req, res, next){
         try{
             const {title, color, taskId} = req.body
-            if(!title || !color || !taskId){
-                return ApiError.badRequest('не вказано title, color або taskId')
+            if(!title || !taskId){
+                return next(ApiError.badRequest('не вказано title або taskId'))
             }
             const tag = await tagService.create(title, color, taskId)
 
@@ -16,11 +16,25 @@ class tagController{
         }
     }
 
+    async getAllByTask(req, res, next){
+        try{
+            const {taskId} = req.body
+            if(!taskId){
+                return next(ApiError.badRequest('не вказано taskId'))
+            }
+            const tags = await tagService.getAllByTask(taskId)
+
+            return res.json(tags)
+        }catch (e){
+            next(e)
+        }
+    }
+
     async delete(req, res, next){
         try{
             const {tagId} = req.body
             if(!tagId){
-                return ApiError.badRequest('не вказано tagId')
+                return next(ApiError.badRequest('не вказано tagId'))
             }
             const tag = await tagService.delete(tagId)
 

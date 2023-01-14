@@ -9,7 +9,7 @@ class tagService{
     }
 
     async getAllByTask(taskId){
-        const tags = await Tag.deleteMany(taskId)
+        const tags = await Tag.find({taskId})
 
         return tags
     }
@@ -22,9 +22,6 @@ class tagService{
 
     async delete(tagId){
         const tag = await Tag.findByIdAndDelete(tagId)
-        if(!tag){
-            throw ApiError.preconditionFailed('tag з таким tagId відсутній')
-        }
 
         return tag
     }

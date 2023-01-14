@@ -17,7 +17,6 @@ const schema = new db.Schema({
     },
     order: {
         type: Number,
-        // required: true
     },
     columnId:{
       type: db.Schema.Types.ObjectId,
