@@ -7,5 +7,6 @@ router.post('/create',authMiddleware, subtaskController.create)
 router.put('/rename',authMiddleware, subtaskController.rename)
 router.get('/subtasks',authMiddleware, subtaskController.getAllByTask)
 router.delete('/delete',authMiddleware, subtaskController.delete)
+router.put('/isDone', authMiddleware, subtaskController.isDone)
 
 module.exports = router

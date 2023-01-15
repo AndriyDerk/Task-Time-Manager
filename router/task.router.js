@@ -9,5 +9,8 @@ router.delete('/delete', authMiddleware, taskController.delete)
 router.put('/rename', authMiddleware, taskController.rename)
 router.put('/changeOrder', authMiddleware, taskController.changeOrder)
 router.put('/changeDescription', authMiddleware, taskController.changeDescription)
+router.put('/addSpendTime', authMiddleware, taskController.addSpendTime)
+router.put('/workingNow', authMiddleware, taskController.workingNow)
+router.put('/changeDeadline', authMiddleware, taskController.changeDeadline)
 
 module.exports = router

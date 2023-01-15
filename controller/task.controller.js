@@ -86,6 +86,48 @@ class taskController{
         }
     }
 
+    async addSpendTime(req, res, next){
+        try{
+            const {taskId, time} = req.body
+            if(!taskId || !time){
+                return next(ApiError.badRequest('Не введено time або taskId!'))
+            }
+            const task = await taskService.addSpendTime(taskId, time)
+
+            return res.json(task)
+        }catch (e) {
+            next(e)
+        }
+    }
+
+    async workingNow(req, res, next){
+        try{
+            const {taskId, userId} = req.body
+            if(!taskId || !userId){
+                return next(ApiError.badRequest('Не введено userId або taskId!'))
+            }
+            const task = await taskService.workingNow(taskId, userId)
+
+            return res.json(task)
+        }catch (e) {
+            next(e)
+        }
+    }
+
+    async changeDeadline(req, res, next){
+        try{
+            const {taskId, deadline} = req.body
+            if(!taskId || !deadline){
+                return next(ApiError.badRequest('Не введено deadline або taskId!'))
+            }
+            const task = await taskService.changeDeadline(taskId, deadline)
+
+            return res.json(task)
+        }catch (e){
+            next(e)
+        }
+    }
+
 }
 
 module.exports = new taskController()

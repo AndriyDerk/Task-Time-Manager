@@ -26,5 +26,27 @@ class tagService{
         return tag
     }
 
+    async changeColor(tagId, color){
+        const tag = await Tag.findById(tagId)
+        if(!tag){
+            throw ApiError.notFound('tag не знайдено!')
+        }
+        tag.color = color
+        await tag.save()
+
+        return tag
+    }
+
+    async changeTitle(tagId, title){
+        const tag = await Tag.findById(tagId)
+        if(!tag){
+            throw ApiError.notFound('tag не знайдено!')
+        }
+        tag.title = title
+        await tag.save()
+
+        return tag
+    }
+
 }
 module.exports = new tagService()

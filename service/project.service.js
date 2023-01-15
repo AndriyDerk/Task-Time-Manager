@@ -8,13 +8,19 @@ class projectService{
 
     async create(title, description, userId){
         const project = await Project.create({title, description})
-        project.save()
+        await project.save()
 
         {//create a link between the project and the user
             let projectId = project._id
             const projectUser = await ProjectUser.create({projectId, userId})
-            projectUser.save()
+            await projectUser.save()
         }
+
+        //create 3 default columns
+        const projectId = project._id,
+            toDoColumn = await columnService.create("toDo", projectId),
+            inProgressColumn = await columnService.create("inProgress", projectId),
+            doneColumn = await columnService.create("done", projectId)
 
         return project
     }
@@ -55,7 +61,7 @@ class projectService{
             throw ApiError.notFound('Проєкт з таким projectId відсутній!')
         }
         project.title = title
-        project.save()
+        await project.save()
 
         return project
     }
@@ -69,6 +75,18 @@ class projectService{
 
         return ({project: project,columns: columns})
     }
+
+    async changeDescription(projectId, description){
+        const project = await Project.findById(projectId)
+        if(!project){
+            throw ApiError.notFound('project з таким projectId не знайдено')
+        }
+        project.description = description
+        await project.save()
+
+        return project
+    }
+
 }
 
 module.exports = new projectService()

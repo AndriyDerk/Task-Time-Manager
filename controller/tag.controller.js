@@ -44,6 +44,33 @@ class tagController{
         }
     }
 
+    async changeColor(req, res, next){
+        try{
+            const {color, tagId} = req.body
+            if(!color || !tagId){
+                return next(ApiError.badRequest('Не вказано color або tagId!'))
+            }
+            const tag = await tagService.changeColor(tagId, color)
+
+            return res.json(tag)
+        }catch (e){
+            next(e)
+        }
+    }
+
+    async changeTitle(req, res, next){
+        try{
+            const {title, tagId} = req.body
+            if(!title || !tagId){
+                return next(ApiError.badRequest('Не вказано title або tagId!'))
+            }
+            const tag = await tagService.changeTitle(tagId, title)
+
+            return res.json(tag)
+        }catch (e){
+            next(e)
+        }
+    }
 }
 
 module.exports = new tagController()

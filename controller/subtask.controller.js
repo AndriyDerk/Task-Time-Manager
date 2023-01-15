@@ -58,6 +58,19 @@ class subtaskController{
         }
     }
 
+    async isDone(req, res, next){
+        try{
+            const {subtaskId} = req.body
+            if(!subtaskId){
+                return next(ApiError.badRequest('Не введено subtaskId'))
+            }
+            const subtask = await subtaskService.isDone(subtaskId)
+
+            return res.json(subtask)
+        }catch (e){
+            next(e)
+        }
+    }
 
 }
 

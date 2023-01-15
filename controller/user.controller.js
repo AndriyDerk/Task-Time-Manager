@@ -123,6 +123,20 @@ class userController{
         }
     }
 
+    async resendActivationMail(req, res, next){//TODO: робити перевірку на активованість?
+        try{
+            const {userId} = req.body
+            if(!userId){
+                return next(ApiError.badRequest('Не введено userId!'))
+            }
+            const user = await userService.resendActivationMail(userId)
+
+            return res.json(user)
+        }catch (e){
+            next(e)
+        }
+    }
+
 }
 
 module.exports = new userController()

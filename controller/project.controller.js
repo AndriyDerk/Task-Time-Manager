@@ -70,6 +70,20 @@ class projectController{
         }
     }
 
+    async changeDescription(req, res ,next){
+        try{
+            const {projectId, description} = req.body
+            if(!projectId || !description){
+                return next(ApiError.badRequest('Не введено description або projectId!'))
+            }
+            const project = await projectService.changeDescription(projectId, description)
+
+            return res.json(project)
+        }catch (e){
+            next(e)
+        }
+    }
+
 }
 
 module.exports = new projectController()

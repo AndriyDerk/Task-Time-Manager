@@ -1,4 +1,4 @@
-const db= require('../db/db')
+const db = require('../db/db')
 
 const schema = new db.Schema({
     name:{
@@ -8,6 +8,10 @@ const schema = new db.Schema({
     },
     projectId:{
         type: db.Schema.Types.ObjectId,
+        required: true
+    },
+    order:{
+        type: Number,
         required: true
     }
 })

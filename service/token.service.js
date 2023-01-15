@@ -36,7 +36,7 @@ class tokenService{
         const tokenData = await Token.findOne({userId})
         if(tokenData){
             tokenData.refreshToken = refreshToken
-            tokenData.save()
+            await tokenData.save()
 
             return tokenData
         }

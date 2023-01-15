@@ -57,6 +57,21 @@ class columnController{
             next(e)
         }
     }
+
+    async changeOrder(req, res, next){
+        try{
+            const {columnId, projectId, order} = req.body
+            if(!projectId || !columnId || !order){
+                return next(ApiError.badRequest('Не введено projectId, columnId або order!'))
+            }
+            const columns = await columnService.changeOrder(columnId, projectId, order)
+
+            return res.json(columns)
+        }catch(e){
+            next(e)
+        }
+    }
+
 }
 
 module.exports = new columnController()

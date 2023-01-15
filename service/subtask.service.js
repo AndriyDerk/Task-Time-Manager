@@ -15,7 +15,7 @@ class subtaskService{
             throw ApiError.notFound('subtask з таким subtaskId не знайдено')
         }
         subtask.description = description
-        subtask.save()
+        await subtask.save()
 
         return subtask
     }
@@ -40,6 +40,22 @@ class subtaskService{
         if(!subtask){
             throw ApiError.notFound('subtask з таким subtaskId не знайдено')
         }
+
+        return subtask
+    }
+
+    async isDone(subtaskId){
+        const subtask = await Subtask.findById(subtaskId)
+        if(!subtask){
+            throw ApiError.notFound('subtask з таким subtaskId не знайдено')
+        }
+        const isDone = subtask.isDone
+        if(isDone){
+            subtask.isDone = false
+        }else{
+            subtask.isDone = true
+        }
+        await subtask.save()
 
         return subtask
     }

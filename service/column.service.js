@@ -5,11 +5,12 @@ const taskService = require('./task.service')
 class columnService {
 
     async create(name, projectId){
-        const candidate = await Column.findOne({name})
+        const candidate = await Column.findOne({name: name, projectId: projectId})
         if(candidate){
-            throw ApiError.preconditionFailed('кластер з такою назвою вже існує')
+            throw ApiError.preconditionFailed('column з такою назвою вже існує')
         }
-        const column = await Column.create({name, projectId})
+        const order = await this.getOrder(projectId),
+            column = await Column.create({name, projectId, order})
 
         return column
     }
@@ -47,9 +48,35 @@ class columnService {
             throw ApiError.notFound('column з таким columnId не знайдено')
         }
         column.name = name
-        column.save()
+        await column.save()
 
         return column
+    }
+
+    async getOrder(projectId){
+        const columns = await Column.find({projectId}),
+            len = Number(columns.length) + Number(1)
+
+        return len
+    }
+
+    async changeOrder(columnId, projectId, order){
+        const column = await Column.findById(columnId)
+        column.order = order-0.5
+        await column.save()
+        const columns = await this.sortColumnsInProject(projectId)
+
+        return columns
+    }
+
+    async sortColumnsInProject(projectId){
+        const columns = await Column.find({projectId}).sort({order: 1})
+        for(let it in columns){
+            columns[it].order = Number(it) + Number(1)
+            await columns[it].save()
+        }
+
+        return columns
     }
 
 }

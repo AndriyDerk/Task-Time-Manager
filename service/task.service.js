@@ -6,7 +6,7 @@ const tagService = require('./tag.service')
 class  taskService{
     async create(projectId, title, description, order, columnId, deadline){
         const task = await Task.create({projectId, title, description, order, columnId, deadline})
-        task.save()
+        await task.save()
 
         return task
     }
@@ -34,8 +34,10 @@ class  taskService{
         if(!task){
             throw ApiError.notFound("task з таким taskId відсутній!")
         }
-        const subtasks = await subtaskService.deleteAllByTask({taskId})
-        const tags = await tagService.deleteAllByTask({taskId})
+        const subtasks = await subtaskService.deleteAllByTask({taskId}),
+            tags = await tagService.deleteAllByTask({taskId}),
+            columnId = task.columnId,
+            tasks = await this.sortTaskInColumn(columnId)
 
         return  ({task: task, subtask: subtasks, tags: tags})
     }
@@ -50,7 +52,7 @@ class  taskService{
     async changeOrder(taskId, columnId, order){
         const task = await Task.findById(taskId)
         let tf = 0, prevColumnId = task.columnId
-        if(prevColumnId == columnId){// TODO: does it work?
+        if(prevColumnId == columnId){
             tf = 1
         }
         task.columnId = columnId
@@ -71,7 +73,7 @@ class  taskService{
             throw ApiError.notFound('tasks з таким taskId не знайдено')
         }
         task.title = title
-        task.save()
+        await task.save()
 
         return task
     }
@@ -82,7 +84,7 @@ class  taskService{
             throw ApiError.notFound('tasks з таким taskId не знайдено')
         }
         task.description = description
-        task.save()
+        await task.save()
 
         return task
     }
@@ -91,10 +93,43 @@ class  taskService{
         const tasks = await Task.find({columnId}).sort({order: 1})
         for(let it in tasks){
             tasks[it].order = Number(it) + Number(1)
-            tasks[it].save()
+            await tasks[it].save()
         }
 
         return tasks
+    }
+
+    async addSpendTime(taskId, time){
+        const task = await Task.findById(taskId)
+        if(!task){
+            throw ApiError.notFound('tasks з таким taskId не знайдено')
+        }
+        task.spendTime = Number(task.spendTime) + Number(time)
+        await task.save()
+
+        return task
+    }
+
+    async workingNow(taskId, userId){
+        const task = await Task.findById(taskId)
+        if(!task){
+            throw ApiError.notFound('tasks з таким taskId не знайдено')
+        }
+        task.workingNow = userId
+        await task.save()
+
+        return task
+    }
+
+    async changeDeadline(taskId, deadline){
+        const task = await Task.findById(taskId)
+        if(!task){
+            throw ApiError.notFound('tasks з таким taskId не знайдено')
+        }
+        task.deadline = deadline
+        await task.save()
+
+        return task
     }
 
 }

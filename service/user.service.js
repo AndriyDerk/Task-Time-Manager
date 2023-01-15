@@ -75,7 +75,7 @@ class userService{
             throw ApiError.notFound('user з таким userId не знайдено!')
         }
         user.name = name
-        user.save()
+        await user.save()
 
         return user
     }
@@ -90,7 +90,7 @@ class userService{
         const activationLink = uuid.v4()
         user.activationLink = activationLink
         await mailService.sendActivationMail(newEmail, `${process.env.API_URL}/user/activate/${activationLink}`)
-        user.save()
+        await user.save()
 
         return user
     }
@@ -115,7 +115,19 @@ class userService{
         }
         const hashPassword = await bcrypt.hash(newPassword, 3)
         user.password = hashPassword
-        user.save()
+        await user.save()
+
+        return user
+    }
+
+    async resendActivationMail(userId){
+        const user = await User.findById(userId)
+        if(!user){
+            throw ApiError.notFound('user з таким userId не знайдено!')
+        }
+        const activationLink = user.activationLink,
+            email = user.email
+        await mailService.sendActivationMail(email, `${process.env.API_URL}/user/activate/${activationLink}`)
 
         return user
     }

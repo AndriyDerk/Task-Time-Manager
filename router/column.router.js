@@ -5,6 +5,7 @@ const authMiddleware = require('../middleware/authMiddleware')
 
 router.post('/create',authMiddleware, columnController.create)
 router.put('/rename', authMiddleware, columnController.rename)
+router.put('/changeOrder', authMiddleware, columnController.changeOrder)
 router.get('/columns',authMiddleware, columnController.getAllByProject)
 router.delete('/delete',authMiddleware, columnController.delete)
 
